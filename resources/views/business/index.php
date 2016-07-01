@@ -6,32 +6,36 @@
 
 </header>
 <body>
+
+
 <div class="container">
 	<div class="panel panel-default">
-	  <div class="panel-heading">Panel heading without title</div>
-	  <div class="panel-body">
+		  <div class="panel-heading">Business</div>
+		  <div class="panel-body">
 
-	  <h2>Information </h2>
-	  <div id='bussiness-info'> 
-	  </div>
+		  <h2>Information </h2>
+		  <div id='bussiness-info'> 
+		  </div>
+		  <div>
 
-	  <h2>Reviews </h2>
-	  <div> <span> <b> Filter :  </b></span>
-		  <input type="checkbox" onclick="refreshReviews()" id="ck-google" value="google"> <label for="ck-google">Google</label>
-		  <input type="checkbox" onclick="refreshReviews()"id="ck-internal" value="internal"> <label for="ck-internal">Internal</label>
-		  <input type="checkbox" onclick="refreshReviews()" id="ck-yelp" value="yelp"> <label for="ck-yelp">Yelp</label>
+			  <h2>Reviews </h2>
+			  <div> <span> <b> Filter :  </b></span>
+				  <input type="checkbox" checked onclick="refreshReviews()" id="ck-google" value="google"> <label for="ck-google">Google</label>
+				  <input type="checkbox"  checked onclick="refreshReviews()"id="ck-internal" value="internal"> <label for="ck-internal">Internal</label>
+				  <input type="checkbox"  checked onclick="refreshReviews()" id="ck-yelp" value="yelp"> <label for="ck-yelp">Yelp</label>
 
-	  </div>
+			  </div>
 
-	  <div id='bussiness-reviews'> 
-	  </div>
+			  <div id='bussiness-reviews'> 
+			  </div>
 
-	  <div id='pagefooter'>
-	  <div>
+			  <div id='pagefooter'>
+			  </div>
+			</div>
 
 
-	   
-	  </div>
+		   
+		  </div>
 	</div>
 </div>
 
@@ -45,55 +49,65 @@
 
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/js/bootstrap.min.js"></script>
 
-
+<!--Template for business informations -->
  <script id="bussines-info-template" type="x-handlebars-template">​
 
  
-             <ul class="product-description">
+             <ul class="business-description">
               <li><span>Bussiness: </span>{{business_name}}</li>
-              <li><span>Adress: </span>{{specs.storage}} GB</li>
+              <li><span>Address: </span>{{business_addres}}</li>
               <li><span>Phone: </span>{{business_phone}}</li>
+              <li><span>Average rating: </span>{{total_rating.total_avg_rating}}</li>
+              <li><span>No reviews: </span>{{total_rating.total_no_reviews}}</li>
 
             </ul>
      
    
  </script>
 
+<!--Template for pagination control -->
  <script id="pagination-template" type="x-handlebars-template">​
  
 	 <nav>
 	  <ul class="pagination">
 	    
-	    {{#each this}}
+	    {{#each pages}}
 	   		 <li><a href="#" onclick=setReviewsPage({{this}})> {{this}}</a></li>
 	    {{/each}}
+
+	    <li><span align=right> current: {{current}}</span></li>
 	    
 	  </ul>
 	</nav>    
    
  </script>
 
-
+<!--Template for reviews-->
  <script id="reviews-template" type="x-handlebars-template">​
  		{{#each this}}
- 		<ul class="product-description">
-              <li><span>Bussiness: </span>{{date_of_submission}}<</li>
-              <li><span>Adress: </span>{{customer_last_name}} GB</li>
-              <li><span>Phone: </span>{{description}}</li>
-              <li><span>Review: </span>{{review_source}}</li>
-              <li><span>Url: </span>{{customer_url}}</li>
+ 		<div class="panel panel-default">
+		  <div class="panel-heading">{{date_of_submission}}</div>
+		  <div class="panel-body">
+		  	  <p><span>Name: </span>{{customer_name}}</p>
+              <p><span>Last name: </span>{{customer_lastname}}</p>
+		  	  <p><span>Description: </span>{{description}}</p>
+		 	  <p><span>Date: </span>{{date_of_submission}}<</p>
+              <p><span>Rating: </span>{{rating}}</p>
 
-            </ul>       
+              <p><span>Review: </span>{{review_source}}</p>
+              <p><a href={{customer_url}}> visit website </a></p>
+
+           </div>
+          </div>    
           {{/each}}
 
              
      
-      </script>         
+      </script>      
 
   <script type="text/javascript">
 
     
-
 
 	
 	
@@ -115,9 +129,23 @@
 			var maxPages=appReg.maxPages;
 
 
-			var begin=appReg.currentPage*maxPages-maxPages;
-			appReg.pageReviews=appReg.reviews.slice(begin,begin+maxPages);
+			var begin=(pageNumber*maxPages)-maxPages;
+			appReg.pageReviews=appReg.reviews.slice(begin,begin+maxPages+1);
 			RenderReviews(appReg.pageReviews);
+			appReg.currentPage=pageNumber;
+
+
+			/** Rendering pagination controls */
+
+			var PageCount=Math.floor(appReg.reviews.length/maxPages);
+			var rndPages=[];
+
+			for (i=1;i<=PageCount;i++){
+				rndPages.push(i);
+			}
+			
+
+			RenderPagination(rndPages,appReg.currentPage);
 		
 		}
 
@@ -154,17 +182,7 @@
 
 				setReviewsPage(1);
 
-				/** Rendering pagination controls */
-
-				var PageCount=Math.floor(app.reviews.length/app.maxPages);
-				var rndPages=[];
-
-				for (i=1;i<=PageCount;i++){
-					rndPages.push(i);
-				}
-				console.log(rndPages);
-
-				RenderPagination(rndPages);
+				
 		   
 			}.bind(this));
 		}
@@ -174,31 +192,28 @@
 		function renderBussinessInfo(data){
 			var info = $('#bussiness-info');
 			var TemplateScript = $("#bussines-info-template").html();
-    		//Compile the template​
     		var Template = Handlebars.compile (TemplateScript);
-    		console.log(info);
     		info.replaceWith (Template(data));
 
 
 		} 
-		function RenderReviews(data,page,reviews){
+		function RenderReviews(data){
 
+	
 			var list = $('#bussiness-reviews');
 			var TemplateScript = $("#reviews-template").html();
-    		//Compile the template​
     		var Template = Handlebars.compile (TemplateScript);
-    		console.log(list);
-    		list.replaceWith (Template(data));
+    		list.empty();
+    		list.append (Template(data));
 
 		}
 
-		function RenderPagination(data){
-			var list = $('#pagefooter');
+		function RenderPagination(data,current){
+			var pagelist = $('#pagefooter');
 			var TemplateScript = $("#pagination-template").html();
-    		//Compile the template​
     		var Template = Handlebars.compile (TemplateScript);
-    		console.log(list);
-    		list.replaceWith (Template(data));
+    		pagelist.empty();
+    		pagelist.append (Template({pages:data,current:current}));
 
 		}
 
