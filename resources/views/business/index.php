@@ -131,7 +131,7 @@
 		  	  <p><span>Name: </span>{{customer_name}}</p>
               <p><span>Last name: </span>{{customer_lastname}}</p>
 		  	  <p><span>Description: </span>{{description}}</p>
-		 	  <p><span>Date: </span>{{date_of_submission}}<</p>
+		 	  <p><span>Date: </span>{{date_of_submission}}</p>
               <p><span>Rating: </span>{{#stars rating}}{{/stars}}</p>
 
               <p><span>Review source: </span>{{#from review_from }}{{/from}}</p>
