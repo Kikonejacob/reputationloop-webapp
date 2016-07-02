@@ -11,9 +11,7 @@
 |
 */
 
-Route::get('/', function () {
-    return  View::make('business.index');
-});
+Route::get('/','HomeController@index');
 
 
 Route::resource('api','ApiController',['only'=>['index']]);
