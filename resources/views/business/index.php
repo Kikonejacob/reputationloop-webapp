@@ -26,8 +26,14 @@
 
 			font-size: medium;
 			list-style-type: none;
-			
+
 		}
+		.filter-box{ /* Disable filter box */
+
+			pointer-events:none;
+			color:#EBEBE4;
+		}
+
 
 	</style>
 
@@ -50,7 +56,7 @@
 
 			    <div>
 				  <h2>Reviews </h2>
-				  <div> <span> <b> Filter :  </b></span>
+				  <div class="filter-box" disabled="disabled"> <span> <b> Filter :  </b></span>
 					  <input type="checkbox" checked onclick="refreshReviews()" id="ck-google" value="google"> <label for="ck-google">Google</label>
 					  <input type="checkbox"  checked onclick="refreshReviews()"id="ck-internal" value="internal"> <label for="ck-internal">Internal</label>
 					  <input type="checkbox"  checked onclick="refreshReviews()" id="ck-yelp" value="yelp"> <label for="ck-yelp">Yelp</label>
@@ -88,7 +94,7 @@
  <script id="bussines-info-template" type="x-handlebars-template">​
  	<h2> {{business_name}} </h2>
     <ul class="business-description">
-      <li><span>Bussiness name: </span>{{business_name}}</li>
+      <li><span>Business name: </span>{{business_name}}</li>
       <li><span>Address: </span>{{business_address}}</li>
       <li><span>Phone: </span>{{business_phone}}</li>
       <li><span>Average rating: </span>{{#stars total_rating.total_avg_rating}}{{/stars}}({{total_rating.total_avg_rating}})</li>
@@ -128,7 +134,8 @@
 		 	  <p><span>Date: </span>{{date_of_submission}}<</p>
               <p><span>Rating: </span>{{#stars rating}}{{/stars}}</p>
 
-              <p><span>Review source: </span>{{review_source}}</p>
+              <p><span>Review source: </span>{{#from review_from }}{{/from}}</p>
+              <p><span>Review from: </span>{{review_source}}</p>
               <p><a href={{customer_url}}> <span class="glyphicon glyphicon-globe" > </span> visit website </a></p>
 
            </div>
@@ -154,6 +161,10 @@
 
 
     }
+    Handlebars.registerHelper('from', function(context, options) {
+    	var review_from = {0: 'internal', 1: 'yelp', 2: 'google'};
+	    return review_from[context];
+	});
 
     /* handle bar for star */
 	Handlebars.registerHelper('stars', function(context, options) {
