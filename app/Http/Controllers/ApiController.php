@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 
 
-class apiController extends Controller
+class ApiController extends Controller
 {
     
     
@@ -22,7 +22,7 @@ class apiController extends Controller
    	$yelp=$request->input('yelp');
    	$yelp=isset($yelp)?$yelp:'1';
 
-   
+
    	
 
    	$baseUri="http://test.localfeedbackloop.com/api/?apiKey=61067f81f8cf7e4a1f673cd230216112&noOfReviews=10&internal=$internal&yelp=$yelp&google=$google&offset=50&threshold=1";
@@ -30,9 +30,11 @@ class apiController extends Controller
 
    	$client = new Client(['base_uri' => $baseUri]);
    
-   	$response = $client->request('GET');
+   	$response = $client->request('GET')->getBody()->getContents();
+   	$decodedContents = json_decode($response, true);
+   	//var_dump($decodedContents);
 
-   	return $response;
+   	return  response()->json($decodedContents);
 
 
 

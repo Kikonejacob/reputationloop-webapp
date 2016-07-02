@@ -16,4 +16,4 @@ Route::get('/', function () {
 });
 
 
-Route::resource('api','apiController',['only'=>['index']]);
+Route::resource('api','ApiController',['only'=>['index']]);
